@@ -5,3 +5,10 @@ from dataclasses import dataclass
 class Legislator:
     id: int
     name: str
+
+
+@dataclass(frozen=True)
+class Bill:
+    id: int
+    title: str
+    sponsor_id: int
