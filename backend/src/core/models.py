@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, TypeVar
 
 from .data_sourcers import BillCSVDataSource
+from .data_sourcers import DataSource
 from .data_sourcers import LegislatorCSVDataSource
 from .data_sourcers import VoteCSVDataSource
 from .data_sourcers import VoteResultCSVDataSource
@@ -32,24 +33,31 @@ class BaseModel:
         return filtered_data
 
     @classmethod
-    def _matches_filters(cls, item, filters) -> bool:
+    def _matches_filters(cls, item: 'BaseModel', filters) -> bool:
         for key, value in filters.items():
             if getattr(item, key, None) != str(value):
                 return False
         return True
 
 
-class Legislator(BaseModel):
-    data_source = LegislatorCSVDataSource
+M = TypeVar('M', bound=BaseModel)
 
 
-class Bill(BaseModel):
-    data_source = BillCSVDataSource
+class ModelFactory:
+    @staticmethod
+    def create[M](data_source: DataSource) -> M:
+        class Model(BaseModel):
+            @classmethod
+            def data_source(cls):
+                return data_source
+
+        return Model
 
 
-class Vote(BaseModel):
-    data_source = VoteCSVDataSource
+Legislator = ModelFactory.create(LegislatorCSVDataSource())
 
+Bill = ModelFactory.create(BillCSVDataSource())
 
-class VoteResult(BaseModel):
-    data_source = VoteResultCSVDataSource
+Vote = ModelFactory.create(VoteCSVDataSource())
+
+VoteResult = ModelFactory.create(VoteResultCSVDataSource())
