@@ -24,7 +24,7 @@ function BillsList() {
             <ul>
                 {bills.map(bill => (
                     <li key={bill.id} className="my-2">
-                        <a href={`/bills/${bill.id}`} className="text-blue-500 hover:underline">
+                        <a href={`/pages/bill/${bill.id}`} className="text-blue-500 hover:underline">
                             {bill.title}
                         </a>
                     </li>
