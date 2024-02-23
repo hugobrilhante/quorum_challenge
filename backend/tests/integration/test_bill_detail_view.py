@@ -4,14 +4,12 @@ from rest_framework.test import APITestCase
 
 from src.core.models import Bill
 from src.core.models import Legislator
-from src.core.models import Vote
 
 
 class BillDetailsViewTest(APITestCase):
     def setUp(self):
         self.bill = Bill.get(id=2952375)
         self.legislator = Legislator.get(id=self.bill.sponsor_id)
-        self.vote = Vote.get(bill_id=self.bill.id)
 
     def test_get_bill_details(self):
         url = reverse('bill-details', kwargs={'bill_id': self.bill.id})

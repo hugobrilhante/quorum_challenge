@@ -39,9 +39,9 @@ class LegislatorDetailView(APIView):
 
     def _get_legislator_votes(self, legislator):
         legislator_id = legislator.id
-        supported_bills = VoteResult.filter(legislator_id=legislator_id, vote_type=1)
-        opposed_bills = VoteResult.filter(legislator_id=legislator_id, vote_type=2)
-        return {'supported_bills': len(supported_bills), 'opposed_bills': len(opposed_bills)}
+        supported = VoteResult.filter(legislator_id=legislator_id, vote_type=1)
+        opposed = VoteResult.filter(legislator_id=legislator_id, vote_type=2)
+        return {'supported': len(supported), 'opposed': len(opposed)}
 
 
 class BillDetailsView(APIView):
