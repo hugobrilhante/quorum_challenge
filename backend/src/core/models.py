@@ -1,12 +1,9 @@
-from pathlib import Path
 from typing import List
 
-from src.core.data_sourcers import BillCSVDataSource
-from src.core.data_sourcers import LegislatorCSVDataSource
-from src.core.data_sourcers import VoteCSVDataSource
-from src.core.data_sourcers import VoteResultCSVDataSource
-
-DATA_DIR = Path(__file__).resolve().parent / '../../data'
+from .data_sourcers import BillCSVDataSource
+from .data_sourcers import LegislatorCSVDataSource
+from .data_sourcers import VoteCSVDataSource
+from .data_sourcers import VoteResultCSVDataSource
 
 
 class BaseModel:
@@ -19,6 +16,16 @@ class BaseModel:
         return [cls(**item) for item in cls.data_source().get_data()]
 
     @classmethod
+    def get(cls, **kwargs) -> 'BaseModel':
+        items = cls.all()
+        filtered_data = [item for item in items if cls._matches_filters(item, kwargs)]
+        if len(filtered_data) == 0:
+            raise ValueError(f'{cls.__name__} not found')
+        elif len(filtered_data) > 1:
+            raise ValueError('Multiple items found')
+        return filtered_data[0]
+
+    @classmethod
     def filter(cls, **kwargs) -> List['BaseModel']:
         items = cls.all()
         filtered_data = [item for item in items if cls._matches_filters(item, kwargs)]
@@ -27,7 +34,7 @@ class BaseModel:
     @classmethod
     def _matches_filters(cls, item, filters) -> bool:
         for key, value in filters.items():
-            if getattr(item, key, None) != value:
+            if getattr(item, key, None) != str(value):
                 return False
         return True
 
