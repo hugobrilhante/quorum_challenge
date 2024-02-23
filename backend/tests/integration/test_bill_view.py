@@ -1,19 +1,13 @@
-import os
-from pathlib import Path
-
 from rest_framework.test import APITestCase
 
 from src.core.models import Bill
-from src.core.parsers import CSVParser
 from src.core.serializers import BillSerializer
-
-BASE_DIR = Path(__file__).resolve().parent
 
 
 class BillListViewTest(APITestCase):
     def setUp(self):
-        self.data = CSVParser(os.path.join(BASE_DIR, '../../src/core/data/bills.csv')).get_data()
-        self.bills = [Bill(**bill) for bill in self.data]
+        self.data = Bill.data
+        self.bills = Bill.all()
 
     def test_get_bills(self):
         response = self.client.get('/bills/')
