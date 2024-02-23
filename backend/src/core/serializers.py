@@ -1,12 +1,18 @@
+from collections import OrderedDict
+
 from rest_framework import serializers
 
-
-class LegislatorSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    name = serializers.CharField()
+from src.core.models import Legislator
 
 
-class BillSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    title = serializers.CharField()
-    sponsor_id = serializers.IntegerField()
+class BaseModelSerializer(serializers.Serializer):
+    def to_representation(self, instance):
+        return instance.__dict__
+
+
+class LegislatorSerializer(BaseModelSerializer):
+    pass
+
+
+class BillSerializer(BaseModelSerializer):
+    pass
