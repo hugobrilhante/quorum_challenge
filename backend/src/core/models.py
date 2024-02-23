@@ -1,4 +1,5 @@
-from typing import List, TypeVar
+from typing import List
+from typing import TypeVar
 
 from .data_sourcers import BillCSVDataSource
 from .data_sourcers import DataSource

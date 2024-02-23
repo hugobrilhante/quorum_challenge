@@ -10,6 +10,17 @@ from .serializers import BillSerializer
 from .serializers import LegislatorSerializer
 
 
+class DetailViewMixin:
+    def _count_supporters(self):
+        return self._count_votes_by_type(vote_type=1)
+
+    def _count_opposers(self):
+        return self._count_votes_by_type(vote_type=2)
+
+    def _count_votes_by_type(self, vote_type):
+        raise NotImplementedError('`_count_votes_by_type()` must be implemented.')
+
+
 class LegislatorListView(APIView):
     def get(self, request):
         legislators = Legislator.all()
@@ -24,63 +35,65 @@ class BillListView(APIView):
         return Response(serializer.data)
 
 
-class LegislatorDetailView(APIView):
+class LegislatorDetailView(DetailViewMixin, APIView):
+    legislator = None
+
     def get(self, request, legislator_id):
         try:
-            legislator = Legislator.get(id=legislator_id)
+            self.legislator = Legislator.get(id=legislator_id)
         except ValueError as exc:
             return Response({'error': str(exc)}, status=status.HTTP_404_NOT_FOUND)
 
-        votes = self._get_legislator_votes(legislator)
+        supporters = self._count_supporters()
+        opposers = self._count_opposers()
 
-        data = {'id': legislator.id, 'name': legislator.name, **votes}
+        data = {
+            'id': self.legislator.id,
+            'name': self.legislator.name,
+            'supported': supporters,
+            'opposed': opposers,
+        }
 
         return Response(data)
 
-    def _get_legislator_votes(self, legislator):
-        legislator_id = legislator.id
-        supported = VoteResult.filter(legislator_id=legislator_id, vote_type=1)
-        opposed = VoteResult.filter(legislator_id=legislator_id, vote_type=2)
-        return {'supported': len(supported), 'opposed': len(opposed)}
+    def _count_votes_by_type(self, vote_type):
+        return len(VoteResult.filter(legislator_id=self.legislator.id, vote_type=1))
 
 
-class BillDetailsView(APIView):
+class BillDetailsView(DetailViewMixin, APIView):
+    bill = None
+
     def get(self, request, bill_id):
         try:
-            bill = Bill.get(id=bill_id)
+            self.bill = Bill.get(id=bill_id)
         except ValueError as exc:
             return Response({'error': str(exc)}, status=status.HTTP_404_NOT_FOUND)
-        supporters = self.count_supporters(bill)
-        opposers = self.count_opposers(bill)
-        sponsor = self.get_bill_sponsor(bill)
+        supporters = self._count_supporters()
+        opposers = self._count_opposers()
+        sponsor = self._get_bill_sponsor()
         data = {
-            'id': bill.id,
-            'title': bill.title,
+            'id': self.bill.id,
+            'title': self.bill.title,
             'supporters': supporters,
             'opposers': opposers,
             'sponsor': sponsor,
         }
         return Response(data)
 
-    def count_supporters(self, bill):
-        vote_ids = [vote.id for vote in Vote.all() if vote.bill_id == bill.id]
-        print(vote_ids)
-        supporters = []
-        for vote_id in vote_ids:
-            supporters.extend(VoteResult.filter(vote_id=vote_id, vote_type=1))
-        return len(supporters)
+    def _get_vote_ids(self):
+        return [vote.id for vote in Vote.all() if vote.bill_id == self.bill.id]
 
-    def count_opposers(self, bill):
-        vote_ids = [vote.id for vote in Vote.all() if vote.bill_id == bill.id]
-        opposers = []
-        for vote_id in vote_ids:
-            opposers.extend(VoteResult.filter(vote_id=vote_id, vote_type=2))
-        return len(opposers)
-
-    def get_bill_sponsor(self, bill):
-        sponsor_id = bill.sponsor_id
+    def _get_bill_sponsor(self):
+        sponsor_id = self.bill.sponsor_id
         try:
             sponsor = Legislator.get(id=sponsor_id)
         except ValueError:
             return None
         return sponsor.name
+
+    def _count_votes_by_type(self, vote_type):
+        vote_ids = self._get_vote_ids()
+        votes = []
+        for vote_id in vote_ids:
+            votes.extend(VoteResult.filter(vote_id=vote_id, vote_type=vote_type))
+        return len(votes)
