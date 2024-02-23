@@ -21,3 +21,13 @@ class LegislatorCSVDataSource(DataSource):
 class BillCSVDataSource(DataSource):
     def get_data(self):
         return CSVParser(DATA_DIR / 'bills.csv').load_data()
+
+
+class VoteCSVDataSource(DataSource):
+    def get_data(self):
+        return CSVParser(DATA_DIR / 'votes.csv').load_data()
+
+
+class VoteResultCSVDataSource(DataSource):
+    def get_data(self):
+        return CSVParser(DATA_DIR / 'vote_results.csv').load_data()

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from src.core.data_sourcers import BillCSVDataSource
+from src.core.data_sourcers import BillCSVDataSource, VoteCSVDataSource, VoteResultCSVDataSource
 from src.core.data_sourcers import LegislatorCSVDataSource
 
 DATA_DIR = Path(__file__).resolve().parent / '../../data'
@@ -23,3 +23,11 @@ class Legislator(BaseModel):
 
 class Bill(BaseModel):
     data_source = BillCSVDataSource
+
+
+class Vote(BaseModel):
+    data_source = VoteCSVDataSource
+
+
+class VoteResult(BaseModel):
+    data_source = VoteResultCSVDataSource
