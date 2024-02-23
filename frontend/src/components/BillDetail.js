@@ -8,7 +8,7 @@ function BillDetail({billId}) {
     useEffect(() => {
         async function fetchBillDetail() {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/bills/${billId}`);
+                const response = await axios.get(`http://localhost:8000/bills/${billId}/`);
                 setBill(response.data);
             } catch (error) {
                 console.error('Error fetching bill detail:', error);

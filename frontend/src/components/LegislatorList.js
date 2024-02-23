@@ -9,7 +9,7 @@ function LegislatorList() {
     useEffect(() => {
         async function fetchLegislators() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/legislators/');
+                const response = await axios.get('http://localhost:8000/legislators/');
                 setLegislators(response.data);
             } catch (error) {
                 console.error('Error fetching legislator:', error);
@@ -26,7 +26,7 @@ function LegislatorList() {
                 {legislators.map(function (legislator) {
                     return (
                         <li key={legislator.id} className="my-2">
-                            <a href={`/pages/legislator/${legislator.id}`} className="text-blue-500 hover:underline">
+                            <a href={`/pages/legislator/${legislator.id}/`} className="text-blue-500 hover:underline">
                                 {legislator.name}
                             </a>
                         </li>

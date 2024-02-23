@@ -8,7 +8,7 @@ function BillsList() {
     useEffect(() => {
         async function fetchBills() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/bills/');
+                const response = await axios.get('http://localhost:8000/bills/');
                 setBills(response.data);
             } catch (error) {
                 console.error('Error fetching bills:', error);
@@ -24,7 +24,7 @@ function BillsList() {
             <ul>
                 {bills.map(bill => (
                     <li key={bill.id} className="my-2">
-                        <a href={`/pages/bill/${bill.id}`} className="text-blue-500 hover:underline">
+                        <a href={`/pages/bill/${bill.id}/`} className="text-blue-500 hover:underline">
                             {bill.title}
                         </a>
                     </li>

@@ -8,7 +8,7 @@ function LegislatorDetail({legislatorId}) {
     useEffect(() => {
         async function fetchLegislatorDetail() {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/legislators/${legislatorId}`);
+                const response = await axios.get(`http://localhost:8000/legislators/${legislatorId}/`);
                 setLegislator(response.data);
             } catch (error) {
                 console.error('Error fetching legislator detail:', error);
