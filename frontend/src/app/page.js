@@ -1,12 +1,13 @@
 "use client"
 import LegislatorList from "@/components/LegislatorList";
 import BillsList from "@/components/BillList";
+import Header from "@/components/Header";
 
 export default function Home() {
     return (
-        <main className="flex flex-col items-center justify-between">
+        <div className="flex font-light ">
             <LegislatorList/>
             <BillsList/>
-        </main>
+        </div>
     );
 }
